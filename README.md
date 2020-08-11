@@ -21,11 +21,11 @@ sh redis.sh
 #### key配置
 ``
 keys="yingApi* fortune* *testKey*"
-支持多个key，模糊匹配，逗号分隔
+支持多个key，模糊匹配，空格分隔
 ``
 #### redis来源集群配置
 ``
-来源节点，支持单点和集群
+来源节点，支持单点和集群，空格分隔
 src_cluster_nodes="10.141.17.68:6379 10.141.17.68:6389 10.141.17.68:6399"
 src_cluster_passwd="redisclusternew"
 ``
