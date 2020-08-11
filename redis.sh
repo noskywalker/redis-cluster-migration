@@ -6,23 +6,31 @@
 #### any questions,please mail to:xianshuangzhang@gmail.com #
 #################################################################
 
+replace=
+if [[ ! -z "$1" ]]
+then
+	replace="$1"
+fi
+
+echo $replace
+
 #please set the keys prefix which to be moved
 #keys="fortune* *many_more_keys*"
-keys="ying:finance* fortune:app:support* fortune:support* PRIVATE_FUND_HOMEPAGE_CACHE* support:* finance:* yingApi* yingTimer* yingmgr:* getInitData* assets:config* invest:* yingService:* ying:cc*"
+keys="yingApi*"
 
 #the original redis cluster connection info
-#src_cluster_nodes="10.141.17.68:6379 10.141.17.68:6389 10.141.17.68:6399"
-#src_cluster_passwd="redisclusternew"
+src_cluster_nodes="10.141.17.68:6379 10.141.17.68:6389 10.141.17.68:6399"
+src_cluster_passwd="redisclusternew"
 
-src_cluster_nodes="10.134.80.51:6382 10.134.80.51:7382 10.134.80.71:6382 10.134.80.71:7382 10.134.80.31:6382 10.134.80.31:7382"
-src_cluster_passwd="123qwe"
+#src_cluster_nodes="10.134.80.51:6382 10.134.80.51:7382 10.134.80.71:6382 10.134.80.71:7382 10.134.80.31:6382 10.134.80.31:7382"
+#src_cluster_passwd="u3pG670oQW"
 
 #the destination redis cluster connection info
-#dest_cluster_nodes="10.141.19.36:6379 10.141.19.36:6389 10.141.19.36:6399 10.141.19.36:7379 10.141.19.36:7389 10.141.19.36:7399"
-#dest_cluster_passwd="perftest"
+dest_cluster_nodes="10.141.19.36:6379 10.141.19.36:6389 10.141.19.36:6399 10.141.19.36:7379 10.141.19.36:7389 10.141.19.36:7399"
+dest_cluster_passwd="perftest"
 
-dest_cluster_nodes="10.134.19.245:6379 10.134.19.246:6379 10.134.19.247:6379 10.134.19.248:6379 10.134.19.249:6379 10.134.19.250:6379 10.134.19.251:6379 10.134.19.252:6379 10.134.19.253:6379 10.134.19.254:6379 10.134.19.245:7379 10.134.19.246:7379 10.134.19.247:7379 10.134.19.248:7379 10.134.19.249:7379 10.134.19.250:7379 10.134.19.251:7379 10.134.19.252:7379 10.134.19.253:7379 10.134.19.254:7379"
-dest_cluster_passwd="123qwe"
+#dest_cluster_nodes="10.134.19.245:6379 10.134.19.246:6379 10.134.19.247:6379 10.134.19.248:6379 10.134.19.249:6379 10.134.19.250:6379 10.134.19.251:6379 10.134.19.252:6379 10.134.19.253:6379 10.134.19.254:6379 10.134.19.245:7379 10.134.19.246:7379 10.134.19.247:7379 10.134.19.248:7379 10.134.19.249:7379 10.134.19.250:7379 10.134.19.251:7379 10.134.19.252:7379 10.134.19.253:7379 10.134.19.254:7379"
+#dest_cluster_passwd="YtWv8Lbeg3HRFaA3"
 
 export PATH=$PATH:/opt/yrd_soft/redis/bin/
 global_node_info=
@@ -40,11 +48,29 @@ function destClusterNode(){
 		global_node_info=${all_nodes[0]}
 	elif [[ "$response" == "1" ]]
 	then
-		global_node_info="skip"
-		echo "dest key first key exists skipped:["$1"]"
+		if [[ -z $replace ]]
+		then
+			global_node_info="skip"
+			echo "no replace,key exists&skipped:["$1"]"
+		else
+			clear_resp=$(redis-cli -h ${node_info[0]} -p ${node_info[1]} -a $dest_cluster_passwd  del "$1")
+			global_node_info=${all_nodes[0]}
+			echo "replace mode,key deleted:["$1"]"
+		fi
+		
 	elif [[ ${#response} -gt 6 && ${response:0:5} == "MOVED" ]]
 	then
 		global_node_info=`echo $response|awk '{print $3}'`
+		echo "********* moved"
+		if [[ -z $replace ]]
+		then
+			global_node_info="skip"
+			echo "no replace,key exists&skipped:["$1"]"
+		else
+			tmp_node_info=($(echo $global_node_info|awk -F ":" '{print $1,$2}'))
+			clear_resp=$(redis-cli -h ${tmp_node_info[0]} -p ${tmp_node_info[1]} -a $dest_cluster_passwd  del "$1")
+			echo "replace mode,key moved&deleted:["$1"]"
+		fi
 		echo "dest node founded!["$global_node_info"]"
 	else
 		global_node_info=${all_nodes[0]}
