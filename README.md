@@ -4,3 +4,6 @@
 ### 2、scan扫描，规避集群block风险
 ### 3、自动forward到正确的分片
 ### 4、自定义key，支持部分搬迁也支持整体搬迁
+## 用法
+### sh redis.sh [replace]
+
