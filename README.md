@@ -6,7 +6,16 @@
 ### 4、自定义key，支持部分搬迁也支持整体搬迁
 
 ## 用法
-### sh redis.sh [replace]
+
+``
+sh redis.sh [replace]
+``
+####替换模式，如果目标集群已存在则替换
+
+``
+sh redis.sh
+``
+#### add模式，如果目标集群已存在则skip
 
 ## 配置说明
 #### key配置
