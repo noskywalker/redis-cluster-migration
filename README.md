@@ -9,25 +9,25 @@
 ## how to use
 
 ````bash
-#替换模式，如果目标集群已存在则替换
+#write replace mode
 sh redis.sh [replace]
 ````
 ###
 ````bash
-# add模式，如果目标集群已存在则skip
+# add mode，if key exists then skip
 sh redis.sh
 ````
 
 ## 配置说明
 #### the specific keys that you want to migrate to new cluster
 ````bash
-#多个key，空格分隔，模糊匹配
+#the key should be migrated
 keys="yingApi* fortune* *testKey*"
 
 ````
 #### the original redis node that you want to migrate from
 ````bash
-#来源节点，支持单点和集群，空格分隔
+#The source that should migrate,suppprting multiple nodes
 src_cluster_nodes="10.141.17.68:6379 10.141.17.68:6389"
 src_cluster_passwd="redisclusternew"
 ````
