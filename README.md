@@ -1,4 +1,4 @@
-![image](logo.png)
+Self-deveoped redis mitration tools using bash only
 ## migrate data from stand-alone redis to redis cluster.Implemented by bash only
 
 #### 1、Can recoginize data type automatically
